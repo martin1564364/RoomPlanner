@@ -1,0 +1,88 @@
+{
+    "version": 1,
+    "room": {
+        "width": 4.2,
+        "depth": 2.32,
+        "height": 2.56
+    },
+    "items": [
+        {
+            "name": "Tapczan",
+            "width": 0.94,
+            "depth": 2,
+            "height": 0.8,
+            "floorHeight": 0,
+            "color": 21150,
+            "opacity": 0,
+            "isBlocked": false,
+            "x": -1.1,
+            "z": -0.69,
+            "rotation": 1.5707963267948966
+        },
+        {
+            "name": "Drzwi",
+            "width": 0.86,
+            "depth": 1.02,
+            "height": 2.14,
+            "floorHeight": 0,
+            "color": 11579568,
+            "opacity": 60,
+            "isBlocked": true,
+            "x": -1.6700000000000002,
+            "z": 0.6499999999999999,
+            "rotation": 0
+        },
+        {
+            "name": "Szafa",
+            "width": 0.6,
+            "depth": 1.16,
+            "height": 2.56,
+            "floorHeight": 0,
+            "color": 12087050,
+            "opacity": 0,
+            "isBlocked": false,
+            "x": 1.52,
+            "z": -0.8599999999999999,
+            "rotation": 1.5707963267948966
+        },
+        {
+            "name": "SzafkaK",
+            "width": 0.6,
+            "depth": 1.03,
+            "height": 1.05,
+            "floorHeight": 0,
+            "color": 14802650,
+            "opacity": 0,
+            "isBlocked": false,
+            "x": 0.41965936739659393,
+            "z": -0.8562570965125706,
+            "rotation": 4.71238898038469
+        },
+        {
+            "name": "Biurko",
+            "width": 1.2,
+            "depth": 0.6,
+            "height": 0.75,
+            "floorHeight": 0,
+            "color": 7948812,
+            "opacity": 0,
+            "isBlocked": false,
+            "x": 0.14559610705596115,
+            "z": 0.8599999999999999,
+            "rotation": 0
+        },
+        {
+            "name": "Krzeslo",
+            "width": 0.5,
+            "depth": 0.5,
+            "height": 0.6,
+            "floorHeight": 0,
+            "color": 7340086,
+            "opacity": 0,
+            "isBlocked": false,
+            "x": 0.13132197891321942,
+            "z": 0.48960259529601463,
+            "rotation": 0
+        }
+    ]
+}

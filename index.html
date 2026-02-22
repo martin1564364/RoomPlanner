@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planer Pokoju</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Planer Pokoju</h1>
+        <button id="toggle-view" class="btn btn-secondary"
+          style="margin-right: 15px; padding: 4px 8px; font-weight: bold; background: #6ab0de; color: #1a1a2e;">Widok:
+          2D</button>
+      </div>
+
+      <section class="sidebar-section">
+        <h2>Wymiary pokoju</h2>
+        <div class="form-grid">
+          <label>Dł. (m)</label>
+          <input type="number" id="room-width" value="4.2" step="0.1" min="1" max="20">
+          <label>Szer. (m)</label>
+          <input type="number" id="room-depth" value="2.32" step="0.1" min="1" max="20">
+          <label>Wys. (m)</label>
+          <input type="number" id="room-height" value="2.5" step="0.1" min="1" max="10">
+        </div>
+        <button id="apply-room" class="btn btn-primary">Zastosuj</button>
+      </section>
+
+      <section class="sidebar-section">
+        <h2 id="form-title">Dodaj element</h2>
+        <div class="form-group">
+          <label for="item-name">Nazwa</label>
+          <input type="text" id="item-name" placeholder="np. Łóżko" value="Łóżko">
+        </div>
+        <div class="form-grid">
+          <label>Szer. (m)</label>
+          <input type="number" id="item-width" value="1.0" step="0.05" min="0.1" max="10">
+          <label>Głęb. (m)</label>
+          <input type="number" id="item-depth" value="1.0" step="0.05" min="0.05" max="10">
+          <label>Wys. mebla (m)</label>
+          <input type="number" id="item-height" value="0.8" step="0.05" min="0.05" max="5">
+          <label>Wys. od podł. (m)</label>
+          <input type="number" id="item-floor-height" value="0" step="0.05" min="0" max="5"
+            title="Wysokość dolnej powierzchni mebla nad podłogą">
+        </div>
+        <div class="form-row">
+          <label for="item-color">Kolor</label>
+          <input type="color" id="item-color" value="#6ab0de">
+        </div>
+        <div class="form-group">
+          <label for="item-opacity">Przezroczystość: <span id="opacity-value">0%</span></label>
+          <input type="range" id="item-opacity" min="0" max="100" value="0" class="slider">
+        </div>
+        <div id="add-buttons" class="btn-row">
+          <button id="add-furniture" class="btn btn-primary">+ Dodaj mebel</button>
+          <button id="add-blocked" class="btn btn-secondary">▒ Dodaj strefę</button>
+        </div>
+        <div id="edit-buttons" class="btn-row hidden">
+          <button id="save-item" class="btn btn-primary">Zapisz zmiany</button>
+          <button id="cancel-edit" class="btn btn-secondary">Anuluj</button>
+        </div>
+      </section>
+
+      <section class="sidebar-section">
+        <h2>Projekt</h2>
+        <div class="btn-row">
+          <button id="btn-export" class="btn btn-secondary">💾 Kopiuj kod</button>
+          <button id="btn-import" class="btn btn-secondary">📋 Wklej kod</button>
+        </div>
+        <p class="empty-hint" style="margin-top:6px">Kopiuje strukturę całego pokoju jako tekst do zapisu z
+          boku.<br>Stan jest cały czas niezależnie zapisywany w tle (autosave).</p>
+      </section>
+
+      <section class="sidebar-section">
+        <h2>Elementy</h2>
+        <ul id="items-list" class="items-list"></ul>
+        <p id="items-empty" class="empty-hint">Brak elementów. Dodaj mebel lub strefę zablokowaną.</p>
+      </section>
+
+      <div id="placement-hint" class="placement-hint hidden">
+        Kliknij na planie aby umieścić element.<br>
+        <strong>R</strong> / <strong>PPM</strong> = obróć &nbsp;|&nbsp; <strong>ESC</strong> = anuluj
+      </div>
+    </aside>
+
+    <main id="canvas-area">
+      <canvas id="main-canvas"></canvas>
+    </main>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
