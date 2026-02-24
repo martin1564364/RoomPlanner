@@ -299,6 +299,7 @@ input[type="range"].slider {
   inset: 0;
   width: 100%;
   height: 100%;
+  touch-action: none;
 }
 
 
@@ -312,4 +313,42 @@ input[type="range"].slider {
 #sidebar::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 3px;
+}
+
+/* ---- MOBILE LAYOUT ---- */
+@media (max-width: 640px) {
+  #app {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    min-width: unset;
+    max-height: 52vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  #canvas-area {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Bigger touch targets */
+  .btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .btn-row .btn {
+    font-size: 12px;
+    padding: 9px 10px;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    padding: 7px 8px;
+    font-size: 14px;
+  }
 }
