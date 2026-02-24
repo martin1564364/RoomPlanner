@@ -1,5 +1,5 @@
 import { items, removeItem, hexStringToNumber, updateItemSettings } from './items.js';
-import { startPlacement, cancelPlacement, setViewMode } from './interaction.js';
+import { startPlacement, cancelPlacement, setViewMode, rotatePendingGhost, rotateItemById } from './interaction.js';
 import { exportToClipboard, importFromClipboard, autosave } from './project.js';
 
 let onRoomApply = null;
@@ -75,6 +75,14 @@ export function initUI(roomApplyCallback, viewToggleCallback) {
 
   document.getElementById('cancel-edit').addEventListener('click', () => {
     cancelEditMode();
+  });
+
+  // Placement hint buttons (rotate / cancel) — działają też na mobile
+  document.getElementById('btn-rotate-ghost').addEventListener('click', () => {
+    rotatePendingGhost();
+  });
+  document.getElementById('btn-cancel-placement').addEventListener('click', () => {
+    cancelPlacement();
   });
 
   // Export button
@@ -172,6 +180,17 @@ export function renderItemsList() {
     const btnGroup = document.createElement('span');
     btnGroup.style.display = 'flex';
     btnGroup.style.gap = '4px';
+
+    const rotBtn = document.createElement('button');
+    rotBtn.className = 'item-edit';
+    rotBtn.textContent = '↻';
+    rotBtn.title = 'Obróć element o 90°';
+    rotBtn.style.background = 'none';
+    rotBtn.style.border = 'none';
+    rotBtn.style.color = '#ccc';
+    rotBtn.style.cursor = 'pointer';
+    rotBtn.addEventListener('click', () => rotateItemById(item.id));
+    btnGroup.appendChild(rotBtn);
 
     const editBtn = document.createElement('button');
     editBtn.className = 'item-edit';

@@ -30,6 +30,10 @@ export function initInteraction(canvasEl, orthoCam, sceneRef, roomCfg) {
   canvas.addEventListener('mouseup', onMouseUp);
   canvas.addEventListener('contextmenu', onContextMenu);
   window.addEventListener('keydown', onKeyDown);
+
+  canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+  canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+  canvas.addEventListener('touchend', onTouchEnd, { passive: false });
 }
 
 export function updateRoomConfig(cfg) {
@@ -68,12 +72,20 @@ export function cancelPlacement() {
   document.getElementById('placement-hint').classList.add('hidden');
 }
 
+// Pobierz współrzędne z myszy lub dotyku
+function getPointer(e) {
+  if (e.touches && e.touches.length > 0) return e.touches[0];
+  if (e.changedTouches && e.changedTouches.length > 0) return e.changedTouches[0];
+  return e;
+}
+
 // NDC [-1,1]
 function clientToNDC(e) {
   const rect = canvas.getBoundingClientRect();
+  const ptr = getPointer(e);
   return new THREE.Vector2(
-    ((e.clientX - rect.left) / canvas.clientWidth) * 2 - 1,
-    -((e.clientY - rect.top) / canvas.clientHeight) * 2 + 1
+    ((ptr.clientX - rect.left) / canvas.clientWidth) * 2 - 1,
+    -((ptr.clientY - rect.top) / canvas.clientHeight) * 2 + 1
   );
 }
 
@@ -219,4 +231,97 @@ function pickItem(e) {
   if (!intersects.length) return null;
   const itemId = intersects[0].object.userData.itemId;
   return items.find(i => i.id === itemId) || null;
+}
+
+// ---- Touch handlers ----
+
+function onTouchStart(e) {
+  if (viewMode === '3D') return;
+  e.preventDefault();
+  if (e.touches.length !== 1) return;
+
+  const worldPos = raycastFloor(e);
+  if (!worldPos) return;
+
+  if (pendingConfig && ghostMesh) {
+    // Ustaw ghost w miejscu dotyku; touchend umieści element
+    const { w, d } = effectiveDims(pendingConfig.width, pendingConfig.depth, pendingConfig.rotation ?? 0);
+    const clamped = clampToRoom(worldPos.x, worldPos.z, w, d);
+    ghostMesh.position.set(clamped.x, pendingConfig.height / 2, clamped.z);
+    return;
+  }
+
+  const hit = pickItem(e);
+  if (hit) {
+    selectedItemId = hit.id;
+    isDragging = true;
+    dragItemId = hit.id;
+    dragOffsetX = worldPos.x - hit.x;
+    dragOffsetZ = worldPos.z - hit.z;
+  } else {
+    selectedItemId = null;
+  }
+}
+
+function onTouchMove(e) {
+  if (viewMode === '3D') return;
+  e.preventDefault();
+  if (e.touches.length !== 1) return;
+
+  const worldPos = raycastFloor(e);
+  if (!worldPos) return;
+
+  if (ghostMesh && pendingConfig) {
+    const { w, d } = effectiveDims(pendingConfig.width, pendingConfig.depth, pendingConfig.rotation ?? 0);
+    const clamped = clampToRoom(worldPos.x, worldPos.z, w, d);
+    ghostMesh.position.set(clamped.x, pendingConfig.height / 2, clamped.z);
+  }
+
+  if (isDragging && dragItemId !== null) {
+    const item = items.find(i => i.id === dragItemId);
+    if (item) {
+      const { w, d } = effectiveDims(item.width, item.depth, item.rotation ?? 0);
+      const clamped = clampToRoom(
+        worldPos.x - dragOffsetX,
+        worldPos.z - dragOffsetZ,
+        w, d
+      );
+      updateItemPosition(dragItemId, clamped.x, clamped.z);
+    }
+  }
+}
+
+function onTouchEnd(e) {
+  if (viewMode === '3D') return;
+  e.preventDefault();
+
+  if (pendingConfig && ghostMesh) {
+    // Umieść element w aktualnej pozycji ghosta
+    addItem({ ...pendingConfig, x: ghostMesh.position.x, z: ghostMesh.position.z });
+    cancelPlacement();
+    renderItemsList();
+    autosave(roomConfig);
+    return;
+  }
+
+  if (isDragging) {
+    isDragging = false;
+    dragItemId = null;
+    canvas.style.cursor = '';
+    autosave(roomConfig);
+  }
+}
+
+// ---- Eksporty dla przycisków mobilnych ----
+
+export function rotatePendingGhost() {
+  if (pendingConfig && ghostMesh) {
+    pendingConfig.rotation = snapAngle((pendingConfig.rotation ?? 0) + SNAP_RAD);
+    ghostMesh.rotation.y = pendingConfig.rotation;
+  }
+}
+
+export function rotateItemById(id) {
+  const item = items.find(i => i.id === id);
+  if (item) rotateItem(item);
 }
